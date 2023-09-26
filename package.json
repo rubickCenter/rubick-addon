@@ -1,0 +1,47 @@
+{
+  "name": "rubick-addon",
+  "version": "0.0.1",
+  "description": "rubick-addon is an N-API module for rubick",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "clean": "cmake-js clean",
+    "build:debug": "cmake-js rebuild --CDCMAKE_OSX_ARCHITECTURES=\"arm64;x86_64\" --debug",
+    "build:release": "cmake-js rebuild --CDCMAKE_OSX_ARCHITECTURES=\"arm64;x86_64\"",
+    "prepublishOnly": "npm run build:release",
+    "publish:next": "npm publish --tag next"
+  },
+  "homepage": "",
+  "author": "muwoo",
+  "keywords": [
+    "GUI",
+    "Automation",
+    "keyboard",
+    "clipboard",
+    "desktop",
+    "autohotkey"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bindings": "1.5.0"
+  },
+  "devDependencies": {
+    "cmake-js": "7.1.1",
+    "node-addon-api": "5.1.0"
+  },
+  "optionalDependencies": {
+    "@nut-tree/node-mac-permissions": "2.2.1"
+  },
+  "engines": {
+    "node": ">=10.15.3"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
+}

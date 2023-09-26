@@ -1,0 +1,61 @@
+name: Create tagged release
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, macos-11, windows-2019 ]
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{matrix.node}}
+      - name: Configure Linux environment
+        if: ${{matrix.os == 'ubuntu-20.04'}}
+        run: sudo apt-get install -y cmake libx11-dev zlib1g-dev libpng-dev libxtst-dev build-essential
+      - name: Install
+        run: npm run patch && npm i
+      - name: Build
+        run: npm run build:release
+      - name: Run tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          working-directory: ./test/
+          run: npm cit
+      - name: Run window tests
+        if: ${{matrix.os == 'windows-2019'}}
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          working-directory: ./test/window-integration-tests
+          run: npm cit
+
+  deploy:
+    needs:
+      - test
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, macos-11, windows-2019 ]
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Configure Linux environment
+        if: ${{matrix.os == 'ubuntu-20.04'}}
+        run: sudo apt-get install -y cmake libx11-dev zlib1g-dev libpng-dev libxtst-dev build-essential
+      - name: Install
+        run: npm run patch && npm i
+      - name: Publish tagged release
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}

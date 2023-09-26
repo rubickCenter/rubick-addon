@@ -1,0 +1,8 @@
+build/
+node_modules/
+prebuilds/
+.idea
+.vscode
+.cache
+cmake-build-debug
+.DS_Store
